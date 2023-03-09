@@ -202,6 +202,43 @@ class CliktHelpFormatterTest {
     }
 
     @Test
+    @JsName("test")
+    fun `doesn't break table formatting`() {
+        val f = CliktHelpFormatter(width = 200)
+        f.formatHelp(prolog = """Shows tasks with the most negative savings, by build.
+
+                    Example output:
+
+                    Builds matching /^:app:assembleBrazilDebug unitTest$/
+                    Accumulated savings since 2023-01-04T00:00Z[UTC]: -4429m
+                    Top 30 tasks:
+                    ┌─────────────────────────────┬────────────────────────┬────────────────────────────┬──────────────┬
+                    │ Task key                    │ Negative savings exec. │ Builds with negative exec. │ Acc. savings │
+                    ├─────────────────────────────┼────────────────────────┼────────────────────────────┼──────────────┼
+                    │ generate{flavor}ResValues   │ 100.00% (1180/1180)    │ 57.76% (1180/2043)         │ -213s        │
+                    ├─────────────────────────────┼────────────────────────┼────────────────────────────┼──────────────┼
+                    │ generate{flavor}BuildConfig │ 99.72% (51079/51222)   │ 9.35% (191/2043)           │ -9729s       │
+                """, epilog = "",
+            parameters = emptyList(),
+            programName = "prog") shouldBe
+                """
+                |Usage: prog [OPTIONS]
+                |
+                |  Shows tasks with the most negative savings, by build.
+                |
+                |  Builds matching /^:app:assembleBrazilDebug unitTest$/
+                |  Accumulated savings since 2023-01-04T00:00Z[UTC]: -4429m
+                |  Top 30 tasks:
+                |  ┌─────────────────────────────┬────────────────────────┬────────────────────────────┬──────────────┬
+                |  │ Task key                    │ Negative savings exec. │ Builds with negative exec. │ Acc. savings │
+                |  ├─────────────────────────────┼────────────────────────┼────────────────────────────┼──────────────┼
+                |  │ generate{flavor}ResValues   │ 100.00% (1180/1180)    │ 57.76% (1180/2043)         │ -213s        │
+                |  ├─────────────────────────────┼────────────────────────┼────────────────────────────┼──────────────┼
+                |  │ generate{flavor}BuildConfig │ 99.72% (51079/51222)   │ 9.35% (191/2043)           │ -9729s       │
+                """.trimMargin()
+    }
+
+    @Test
     @JsName("formatHelp_prolog_preformat")
     fun `formatHelp prolog preformat`() {
         val f = CliktHelpFormatter(width = 54)
